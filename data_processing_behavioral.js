@@ -1,4 +1,4 @@
-// List all CSV files from the Data_sets/Behavioral_data folder.
+// List behavioral CSV files from the Data_sets/Behavioral_data folder.
 const behavioralCSVFiles = [
   "Data_sets/Behavioral_data/CalmingSubject3.csv",
   "Data_sets/Behavioral_data/CalmingSubject4.csv",
@@ -13,15 +13,13 @@ const behavioralCSVFiles = [
 ];
 
 function processBehavioralFile(file) {
-  return d3.csv(file, d => {
-    return {
-      Response_Time: +d.Response_Time,
-      TrialNumber: +d.TrialNumber,
-      Stimulus_Letter: d.Stimulus_Letter,
-      Correct_Response: d.Correct_Response,
-      Response: d.Response
-    };
-  }).then(rows => {
+  return d3.csv(file, d => ({
+    Response_Time: +d.Response_Time,
+    TrialNumber: +d.TrialNumber,
+    Stimulus_Letter: d.Stimulus_Letter,
+    Correct_Response: d.Correct_Response,
+    Response: d.Response
+  })).then(rows => {
     const basename = file.substring(file.lastIndexOf("/") + 1);
     const filenameWithoutExt = basename.replace(".csv", "");
     const parts = filenameWithoutExt.split("Subject");
@@ -52,9 +50,7 @@ Promise.all(behavioralCSVFiles.map(processBehavioralFile))
       }
     });
     window.dataBehavioral = allBehavioralData;
-    if (typeof updateHistogram === "function") updateHistogram();
-    if (typeof updateLineChart === "function") updateLineChart();
-    if (typeof updateBoxPlot === "function") updateBoxPlot();
+    updateResponseDistributions();
   })
   .catch(error => {
     console.error("Error processing behavioral data:", error);

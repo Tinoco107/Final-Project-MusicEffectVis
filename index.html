@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Cognitive Effects of Music on Performance</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <!-- Load D3.js -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <!-- Behavioral visualizations & processing -->
-  <script src="visualizations.js"></script>
+  <!-- Behavioral Visualizations & Processing -->
   <script src="data_processing_behavioral.js"></script>
-  <!-- Biopac EDA visualizations & processing -->
+  <script src="visualizations.js"></script>
+  <!-- Biopac Data (EDA & ECG) Processing & Linked Visualizations -->
   <script src="data_processing_biopac.js"></script>
   <script src="biopac_visualizations.js"></script>
 </head>
@@ -18,62 +18,40 @@
     <h1>Cognitive Effects of Music on Performance</h1>
   </header>
 
-  <!-- Behavioral Data Visualizations -->
-  <section id="histogramSection">
-    <h2>Exploring Response Time Distributions</h2>
-    <div class="controls">
-      <label for="histSessionSelect">Select Session:</label>
-      <select id="histSessionSelect">
-        <option value="All">All</option>
-        <option value="Calming">Calming</option>
-        <option value="Vexing">Vexing</option>
-      </select>
-    </div>
-    <svg id="histogramChart" width="600" height="400"></svg>
+  <!-- Global Subject Selection -->
+  <section id="subjectSelection">
+    <label for="subjectSelect">Select Subject:</label>
+    <select id="subjectSelect">
+      <option value="All">All</option>
+      <option value="3F">Subject 3F</option>
+      <option value="4F">Subject 4F</option>
+      <option value="6M">Subject 6M</option>
+      <option value="8M">Subject 8M</option>
+      <option value="11F">Subject 11F</option>
+    </select>
   </section>
 
-  <section id="lineChartSection">
-    <h2>Tracing Cognitive Shifts Over Trials</h2>
-    <div class="controls">
-      <label for="lineSessionSelect">Select Session:</label>
-      <select id="lineSessionSelect">
-        <option value="Both">Both</option>
-        <option value="Calming">Calming</option>
-        <option value="Vexing">Vexing</option>
-      </select>
+  <!-- Behavioral Response Time Distributions -->
+  <section id="behavioralSection">
+    <h2>Response Time Distributions</h2>
+    <div id="responseContainer">
+      <!-- The two faceted containers; contents update based on subject selection -->
+      <div id="calmingHist" class="facetContainer">
+        <h3>Calming</h3>
+      </div>
+      <div id="vexingHist" class="facetContainer">
+        <h3>Vexing</h3>
+      </div>
     </div>
-    <svg id="lineChart" width="600" height="400"></svg>
   </section>
 
-  <section id="boxplotSection">
-    <h2>Understanding Target vs. Non-Target Response Variability</h2>
-    <div class="controls">
-      <label for="boxSessionSelect">Select Session:</label>
-      <select id="boxSessionSelect">
-        <option value="Both">Both</option>
-        <option value="Calming">Calming</option>
-        <option value="Vexing">Vexing</option>
-      </select>
+  <!-- Linked Physiological Signals -->
+  <section id="physioSection">
+    <h2>Linked Physiological Signals (EDA & ECG)</h2>
+    <div id="linkedChartsContainer">
+      <svg id="edaChart" width="600" height="300"></svg>
+      <svg id="ecgChart" width="600" height="300"></svg>
     </div>
-    <svg id="boxplotChart" width="800" height="400"></svg>
-  </section>
-
-  <!-- Biopac EDA Data Visualization -->
-  <section id="biopacEDASection">
-    <h2>Physiological Exploration: Biopac EDA Data</h2>
-    <div class="controls">
-      <label for="edaSubjectSelect">Select Subject:</label>
-      <!-- Updated drop-down options now exactly match file subjects -->
-      <select id="edaSubjectSelect">
-        <option value="All">All</option>
-        <option value="3F">Subject 3F</option>
-        <option value="4F">Subject 4F</option>
-        <option value="6M">Subject 6M</option>
-        <option value="8M">Subject 8M</option>
-        <option value="11F">Subject 11F</option>
-      </select>
-    </div>
-    <svg id="edaChart" width="600" height="400"></svg>
   </section>
 
   <!-- Write-Up Section -->
@@ -81,11 +59,11 @@
     <h2>Exploring the Cognitive Influence of Music</h2>
     <h3>Observations</h3>
     <p>
-      Our interactive visualizations reveal subtle shifts in cognitive performance as well as corresponding physiological changes under different musical stimuli. Narrative annotations and tooltips invite you to explore how music may modulate attention and working memory.
+      The behavioral visualizations show response time distributions—when All subjects are selected, the histograms for Calming and Vexing are stacked by subject (each in different colors). When a specific subject is chosen, only that subject’s data is displayed. The linked physiological charts display downsampled EDA and ECG signals for the selected subject; hovering over one chart displays corresponding time point details on both.
     </p>
     <h3>Insights & Future Directions</h3>
     <p>
-      We hope these explorations spark deeper reflections on how music influences both brain and body. Future work will integrate additional data streams (such as ECG, PPG, RESP, and EMG) to provide coordinated, multi‑modal views.
+      These integrated views provide a focused look at how musical stimuli may affect both behavioral and physiological performance. Future work will refine these interactions and support additional signals.
     </p>
   </section>
 

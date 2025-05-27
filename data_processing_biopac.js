@@ -1,5 +1,4 @@
-// List Biopac EDA CSV files from the Data_sets/Biopac_data/EDA folder.
-// Each file corresponds to one individual subject’s data.
+// List Biopac EDA CSV files.
 const biopacEDAFiles = [
     "Data_sets/Biopac_data/EDA/Subject3F_EDA.csv",
     "Data_sets/Biopac_data/EDA/Subject4F_EDA.csv",
@@ -8,24 +7,29 @@ const biopacEDAFiles = [
     "Data_sets/Biopac_data/EDA/Subject11F_EDA.csv"
   ];
   
-  const rawSampleRate = 2000;    // Raw sampling frequency in Hz
-  const downsampleFactor = 1000; // Keep every 1000th sample (adjust as needed)
+  // List Biopac ECG CSV files.
+  const biopacECGFiles = [
+    "Data_sets/Biopac_data/ECG/Subject3F_ECG.csv",
+    "Data_sets/Biopac_data/ECG/Subject4F_ECG.csv",
+    "Data_sets/Biopac_data/ECG/Subject6M_ECG.csv",
+    "Data_sets/Biopac_data/ECG/Subject8M_ECG.csv",
+    "Data_sets/Biopac_data/ECG/Subject11F_ECG.csv"
+  ];
   
-  function processBiopacEDAFile(file) {
-    // Read the file as plain text instead of CSV (there's no header in the file).
+  const rawSampleRate = 2000;    // Raw sample rate in Hz
+  const downsampleFactor = 1000; // Adjust as needed
+  
+  function processBiopacFile(file, colName) {
     return d3.text(file).then(text => {
       let lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
-      // Downsample the data.
       const downsampled = lines.filter((_, i) => i % downsampleFactor === 0);
-      // Map the downsampled data to objects with computed time:
       const result = downsampled.map((line, i) => ({
-        time: (i * downsampleFactor) / rawSampleRate,  // in seconds
-        EDA: parseFloat(line)
+        time: (i * downsampleFactor) / rawSampleRate,
+        value: parseFloat(line)
       }));
-      // Extract subject from the filename.
-      const basename = file.substring(file.lastIndexOf("/") + 1); // e.g., "Subject3F_EDA.csv"
-      const filenameWithoutExt = basename.replace(".csv", "");      // e.g., "Subject3F_EDA"
-      // We assume the filename starts with "Subject" followed by the subject ID then an underscore.
+      // Extract subject from filename.
+      const basename = file.substring(file.lastIndexOf("/") + 1);
+      const filenameWithoutExt = basename.replace(".csv", "");
       let subject = "Unknown";
       if (filenameWithoutExt.startsWith("Subject")) {
         const underscoreIndex = filenameWithoutExt.indexOf("_");
@@ -34,17 +38,22 @@ const biopacEDAFiles = [
         }
       }
       result.forEach(row => { row.subject = subject; });
-      return result;
+      return result.map(row => ({ time: row.time, [colName]: row.value, subject: row.subject }));
     });
   }
   
-  Promise.all(biopacEDAFiles.map(processBiopacEDAFile))
-    .then(results => {
-      const allBiopacEDA = results.flat();
-      window.dataBiopacEDA = allBiopacEDA;
-      if (typeof updateBiopacEDA === "function") updateBiopacEDA();
+  Promise.all(biopacEDAFiles.map(file => processBiopacFile(file, "EDA")))
+    .then(resultsEDA => {
+      const allEDA = resultsEDA.flat();
+      window.dataBiopacEDA = allEDA;
+      return Promise.all(biopacECGFiles.map(file => processBiopacFile(file, "ECG")));
+    })
+    .then(resultsECG => {
+      const allECG = resultsECG.flat();
+      window.dataBiopacECG = allECG;
+      updateLinkedPhysioCharts();
     })
     .catch(error => {
-      console.error("Error processing Biopac EDA data:", error);
+      console.error("Error processing Biopac data:", error);
     });
   

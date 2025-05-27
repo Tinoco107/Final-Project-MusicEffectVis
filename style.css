@@ -11,6 +11,12 @@ header h1 {
   margin-bottom: 20px;
 }
 
+/* Global Subject Selection */
+#subjectSelection {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
 /* Section Styling */
 section {
   margin-bottom: 50px;
@@ -25,14 +31,34 @@ h2 {
   color: #444;
 }
 
-.controls {
+h3 {
   text-align: center;
-  margin-bottom: 15px;
+  color: #555;
+  margin-bottom: 10px;
 }
 
-label {
-  font-weight: bold;
-  margin-right: 5px;
+/* Facet Container Styling for Behavioral Visualizations */
+#responseContainer {
+  display: flex;
+  justify-content: space-around;
+}
+
+.facetContainer {
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 45%;
+}
+
+.facetSvg {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Linked Charts Container */
+#linkedChartsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Chart Title Styling */
@@ -55,14 +81,9 @@ svg {
 }
 
 /* Write-Up Section */
-#writeup h2, #writeup h3 {
+#writeup {
   text-align: center;
-  margin-bottom: 10px;
-}
-
-#writeup p {
-  margin-bottom: 15px;
-  line-height: 1.5;
+  margin-top: 30px;
 }
 
 /* Tooltip Styling */
