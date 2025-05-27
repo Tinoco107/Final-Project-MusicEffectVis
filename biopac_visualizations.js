@@ -1,11 +1,14 @@
 // Global margin configuration for physiological charts.
 const physioMargin = { top: 20, right: 20, bottom: 50, left: 60 };
 
+
 function updateLinkedPhysioCharts() {
   if (!window.dataBiopacEDA || !window.dataBiopacECG) return;
 
+
   // Get the selected subject from the global "subjectSelect" drop-down.
   const selectedSubject = d3.select("#subjectSelect").property("value");
+
 
   const dataEDA =
     selectedSubject === "All"
@@ -14,6 +17,7 @@ function updateLinkedPhysioCharts() {
           (d) => String(d.subject) === selectedSubject
         );
 
+
   const dataECG =
     selectedSubject === "All"
       ? window.dataBiopacECG
@@ -21,10 +25,12 @@ function updateLinkedPhysioCharts() {
           (d) => String(d.subject) === selectedSubject
         );
 
+
   const edaSvg = d3.select("#edaChart");
   const ecgSvg = d3.select("#ecgChart");
   edaSvg.selectAll("*").remove();
   ecgSvg.selectAll("*").remove();
+
 
   const edaWidth =
     +edaSvg.attr("width") - physioMargin.left - physioMargin.right;
@@ -35,6 +41,7 @@ function updateLinkedPhysioCharts() {
   const ecgHeight =
     +ecgSvg.attr("height") - physioMargin.top - physioMargin.bottom;
 
+
   const edaG = edaSvg
     .append("g")
     .attr("transform", `translate(${physioMargin.left},${physioMargin.top})`);
@@ -42,9 +49,11 @@ function updateLinkedPhysioCharts() {
     .append("g")
     .attr("transform", `translate(${physioMargin.left},${physioMargin.top})`);
 
+
   // Use a common time domain.
   const allTimes = dataEDA.concat(dataECG).map((d) => d.time);
   const xDomain = d3.extent(allTimes);
+
 
   const xScaleEDA = d3
     .scaleLinear()
@@ -57,6 +66,7 @@ function updateLinkedPhysioCharts() {
     .range([0, ecgWidth])
     .nice();
 
+
   const yScaleEDA = d3
     .scaleLinear()
     .domain([d3.min(dataEDA, (d) => d.EDA), d3.max(dataEDA, (d) => d.EDA)])
@@ -67,6 +77,7 @@ function updateLinkedPhysioCharts() {
     .domain([d3.min(dataECG, (d) => d.ECG), d3.max(dataECG, (d) => d.ECG)])
     .range([ecgHeight, 0])
     .nice();
+
 
   // Draw axes.
   edaG
@@ -80,6 +91,7 @@ function updateLinkedPhysioCharts() {
     .call(d3.axisBottom(xScaleECG));
   ecgG.append("g").call(d3.axisLeft(yScaleECG));
 
+
   const edaLine = d3
     .line()
     .x((d) => xScaleEDA(d.time))
@@ -88,6 +100,7 @@ function updateLinkedPhysioCharts() {
     .line()
     .x((d) => xScaleECG(d.time))
     .y((d) => yScaleECG(d.ECG));
+
 
   edaG
     .append("path")
@@ -104,6 +117,7 @@ function updateLinkedPhysioCharts() {
     .attr("stroke-width", 2)
     .attr("d", ecgLine);
 
+
   // Add vertical marker lines.
   const edaMarker = edaG
     .append("line")
@@ -118,7 +132,9 @@ function updateLinkedPhysioCharts() {
     .attr("y1", 0)
     .attr("y2", ecgHeight);
 
+
   const tooltip = d3.select("#tooltip");
+
 
   // Create a shared overlay on EDA chart.
   edaG
@@ -149,6 +165,7 @@ function updateLinkedPhysioCharts() {
       ecgMarker.style("opacity", 0);
     });
 
+
   // Overlay for ECG chart.
   ecgG
     .append("rect")
@@ -178,6 +195,7 @@ function updateLinkedPhysioCharts() {
       ecgMarker.style("opacity", 0);
     });
 
+
   edaSvg
     .append("text")
     .attr("x", (edaWidth + physioMargin.left + physioMargin.right) / 2)
@@ -185,6 +203,7 @@ function updateLinkedPhysioCharts() {
     .attr("text-anchor", "middle")
     .attr("class", "chart-title")
     .text("EDA over Time");
+
 
   ecgSvg
     .append("text")
@@ -195,6 +214,7 @@ function updateLinkedPhysioCharts() {
     .text("ECG over Time");
 }
 
+
 function updateLinkedTooltip(
   time,
   xScaleEDA,
@@ -203,7 +223,7 @@ function updateLinkedTooltip(
   yScaleECG,
   edaMarker,
   ecgMarker,
-  tooltip, 
+  tooltip,
   event
 ) {
   const bisect = d3.bisector((d) => d.time).left;
@@ -213,21 +233,25 @@ function updateLinkedTooltip(
   const d1 = edaData[i];
   const dEDA = !d0 ? d1 : !d1 ? d0 : time - d0.time > d1.time - time ? d1 : d0;
 
+
   const ecgData = window.dataBiopacECG;
   const j = bisect(ecgData, time);
   const e0 = ecgData[j - 1];
   const e1 = ecgData[j];
   const dECG = !e0 ? e1 : !e1 ? e0 : time - e0.time > e1.time - time ? e1 : e0;
 
+
   edaMarker
     .attr("x1", xScaleEDA(dEDA.time))
     .attr("x2", xScaleEDA(dEDA.time))
     .style("opacity", 1);
 
+
   ecgMarker
     .attr("x1", xScaleECG(dECG.time))
     .attr("x2", xScaleECG(dECG.time))
     .style("opacity", 1);
+
 
   tooltip.html(
     `Time: ${dEDA.time.toFixed(2)} s<br>` +
@@ -240,10 +264,13 @@ function updateLinkedTooltip(
 }
 
 
+
+
 // When the global subject drop-down changes, update the behavioral and physiological charts.
 d3.select("#subjectSelect").on("change", () => {
   updateResponseDistributions();
   updateLinkedPhysioCharts();
 });
+
 
 updateLinkedPhysioCharts();
