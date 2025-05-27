@@ -1,0 +1,83 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+header h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Section Styling */
+section {
+  margin-bottom: 50px;
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #444;
+}
+
+.controls {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+/* Chart Title Styling */
+.chart-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Annotation Styling */
+.annotation {
+  font-size: 12px;
+  fill: darkred;
+  font-weight: bold;
+}
+
+/* SVG Styling */
+svg {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Write-Up Section */
+#writeup h2, #writeup h3 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#writeup p {
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+/* Tooltip Styling */
+#tooltip {
+  position: absolute;
+  text-align: left;
+  width: auto;
+  padding: 8px;
+  font-size: 12px;
+  background: lightsteelblue;
+  border: 1px solid #333;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.hidden {
+  opacity: 0;
+}
