@@ -57,14 +57,18 @@
   <!-- Write-Up Section -->
   <section id="writeup">
     <h2>Exploring the Cognitive Influence of Music</h2>
+    <h3> Prototype Write-Up</h3>
+    <p> 1. What have you done so far? So far we have preprocessed our dataset and created response time distributions for each subject (calm and vexing). We have also developed synchronized line charts showing EDA and ECG signals for both per-subject and aggreegated across all subjects. To manage the compelxity of all the visuals, we created a drop down list that allows users to filter by subject in order to explore the data without everything being too overwhelming. We also created a feature where users can hover over the bottom two visuals to see the specific time, EDA, and ECG at that given point for further exploration. </p>
+    <p> 2. What will be the most challenging of your project to design and why? We believe the most challenging part of our project will be implementing summary visualizations that communicate broader trends of the cognitive effects of music across all subjects. As of right now, exploration for a specific subject is not that difficult to digest with the drop down list, but we want our users to be able to reach large takeaways from the data by having access to easy to assimilate visualizations. Our reasoning for this being the most challenging aspect of the project is because designing these insights will likely require integrating multiple csv files and abstracting key metrics in a meaningful way. Balancing complexity and clarity while preserving interactivity will be a difficult design mission. </p>
     <h3>Observations</h3>
     <p>
-      The behavioral visualizations show response time distributions—when All subjects are selected, the histograms for Calming and Vexing are stacked by subject (each in different colors). When a specific subject is chosen, only that subject’s data is displayed. The linked physiological charts display downsampled EDA and ECG signals for the selected subject; hovering over one chart displays corresponding time point details on both.
+      The behavioral visualizations show response time distributions—when All subjects are selected, the histograms for Calming and Vexing are stacked by subject (each in different colors). When a specific subject is chosen, only that subject’s data is displayed. The linked physiological charts display downsampled EDA and ECG signals for the selected subject; hovering over one chart displays corresponding time point details on both. 
     </p>
     <h3>Insights & Future Directions</h3>
     <p>
       These integrated views provide a focused look at how musical stimuli may affect both behavioral and physiological performance. Future work will refine these interactions and support additional signals.
     </p>
+    
   </section>
 
   <!-- Shared Tooltip -->
