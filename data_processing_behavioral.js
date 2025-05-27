@@ -35,30 +35,62 @@ function processBehavioralFile(file) {
     });
 }
 
-Promise.all(behavioralCSVFiles.map(processBehavioralFile))
-  .then((results) => {
-    let allBehavioralData = results.flat();
-    allBehavioralData.forEach((d) => {
-      d.Correct =
-        d.Response && d.Response.trim() !== ""
-          ? d.Response.trim() === d.Correct_Response.trim()
-          : false;
+function renderBehavioralCharts(files) {
+  Promise.all(files.map(processBehavioralFile))
+    .then((results) => {
+      let allBehavioralData = results.flat();
+      allBehavioralData.forEach((d) => {
+        d.Correct =
+          d.Response && d.Response.trim() !== ""
+            ? d.Response.trim() === d.Correct_Response.trim()
+            : false;
+      });
+      allBehavioralData = allBehavioralData.filter((d) => d.Response_Time > 0);
+      const groups = d3.group(
+        allBehavioralData,
+        (d) => `${d.Subject}_${d.Session}`
+      );
+      groups.forEach((group) => {
+        group.sort((a, b) => d3.ascending(a.TrialNumber, b.TrialNumber));
+        for (let i = 0; i < group.length; i++) {
+          group[i].Is_Target =
+            i > 0 && group[i].Stimulus_Letter === group[i - 1].Stimulus_Letter;
+        }
+      });
+      window.dataBehavioral = allBehavioralData;
+      updateResponseDistributions();
+    })
+    .catch((error) => {
+      console.error("Error processing behavioral data:", error);
     });
-    allBehavioralData = allBehavioralData.filter((d) => d.Response_Time > 0);
-    const groups = d3.group(
-      allBehavioralData,
-      (d) => `${d.Subject}_${d.Session}`
-    );
-    groups.forEach((group) => {
-      group.sort((a, b) => d3.ascending(a.TrialNumber, b.TrialNumber));
-      for (let i = 0; i < group.length; i++) {
-        group[i].Is_Target =
-          i > 0 && group[i].Stimulus_Letter === group[i - 1].Stimulus_Letter;
-      }
-    });
-    window.dataBehavioral = allBehavioralData;
-    updateResponseDistributions();
-  })
-  .catch((error) => {
-    console.error("Error processing behavioral data:", error);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Processing behavioral data...");
+  const selectedSubject = document.getElementById("subjectSelect");
+  console.log("Selected subject:", selectedSubject);
+  if (!selectedSubject) {
+    console.error("Subject select element not found!");
+    return;
+  }
+
+  let file;
+  file = behavioralCSVFiles;
+  renderBehavioralCharts(file);
+
+  selectedSubject.addEventListener("change", () => {
+    const subject = selectedSubject.value;
+    console.log("Subject changed to:", subject);
+    if (subject === "All") {
+      console.log("Showing all subjects.");
+      file = behavioralCSVFiles;
+      renderBehavioralCharts(file);
+    } else {
+      console.log(`Showing data for subject: ${subject}`);
+      file = behavioralCSVFiles.filter((f) =>
+        f.includes(`Subject${subject.slice(0, -1)}`)
+      );
+      renderBehavioralCharts(file);
+    }
   });
+});
