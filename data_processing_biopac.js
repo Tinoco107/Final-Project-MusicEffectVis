@@ -50,19 +50,55 @@ function processBiopacFile(file, colName) {
   });
 }
 
-Promise.all(biopacEDAFiles.map((file) => processBiopacFile(file, "EDA")))
-  .then((resultsEDA) => {
-    const allEDA = resultsEDA.flat();
-    window.dataBiopacEDA = allEDA;
-    return Promise.all(
-      biopacECGFiles.map((file) => processBiopacFile(file, "ECG"))
-    );
-  })
-  .then((resultsECG) => {
-    const allECG = resultsECG.flat();
-    window.dataBiopacECG = allECG;
-    updateLinkedPhysioCharts();
-  })
-  .catch((error) => {
-    console.error("Error processing Biopac data:", error);
+function renderBiopacCharts(EDAFiles, ECGFiles) {
+  Promise.all(EDAFiles.map((file) => processBiopacFile(file, "EDA")))
+    .then((resultsEDA) => {
+      const allEDA = resultsEDA.flat();
+      window.dataBiopacEDA = allEDA;
+      return Promise.all(
+        ECGFiles.map((file) => processBiopacFile(file, "ECG"))
+      );
+    })
+    .then((resultsECG) => {
+      const allECG = resultsECG.flat();
+      window.dataBiopacECG = allECG;
+      updateLinkedPhysioCharts();
+    })
+    .catch((error) => {
+      console.error("Error processing Biopac data:", error);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Processing behavioral data...");
+  const selectedSubject = document.getElementById("subjectSelect");
+  console.log("Selected subject:", selectedSubject);
+  if (!selectedSubject) {
+    console.error("Subject select element not found!");
+    return;
+  }
+
+  renderBiopacCharts(biopacEDAFiles, biopacECGFiles);
+
+  let edaFile, ecgFile;
+
+  selectedSubject.addEventListener("change", () => {
+    const subject = selectedSubject.value;
+    console.log("Subject changed to:", subject);
+    if (subject === "All") {
+      console.log("Showing all subjects.");
+      edaFile = biopacEDAFiles;
+      ecgFile = biopacECGFiles;
+      renderBiopacCharts(edaFile, ecgFile);
+    } else {
+      console.log(`Showing data for subject: ${subject}`);
+      edaFile = biopacEDAFiles.filter((f) =>
+        f.includes(`Subject${subject.slice(0, -1)}`)
+      );
+      ecgFile = biopacECGFiles.filter((f) =>
+        f.includes(`Subject${subject.slice(0, -1)}`)
+      );
+      renderBiopacCharts(edaFile, ecgFile);
+    }
   });
+});
