@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music + Two‐Stage Memorization Test</title>
+    <style>
+        body {
+            font-family: "Times New Roman", serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 0.5em;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        #single-word {
+            font-size: 2em;
+            font-weight: bold;
+            padding: 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        #test-form {
+            display: none;
+        }
+
+        .input-row {
+            margin-bottom: 8px;
+        }
+
+        .input-row input {
+            padding: 6px;
+            width: 200px;
+            font-size: 1em;
+        }
+
+        .correct {
+            border: 2px solid green;
+            background-color: #e0ffe0;
+        }
+
+        .incorrect {
+            border: 2px solid red;
+            background-color: #ffe0e0;
+        }
+
+        #results {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="center">🎵 Listen & Memorize 🎶</h1>
+
+    <section id="music-section" class="center">
+        <h2>Background Music</h2>
+        <audio id="bg-music" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+            Your browser does not support the audio element.
+        </audio>
+        <p><em>Music (unmuted) will start when you click to begin Test 1. After Test 1, it will automatically mute for
+                Test 2.</em></p>
+    </section>
+
+    <hr />
+
+    <section id="memory-test">
+        <h2 class="center">Memorization Test</h2>
+        <p>
+            You will see a short countdown, then one word at a time (each for <strong>1 second</strong>). Try to
+            remember each word.
+            Immediately after Test 1, a second (silent) round will start; at the very end, you’ll see both scores.
+        </p>
+
+        <div id="single-word">Click anywhere to start Test 1…</div>
+
+        
+        <form id="test-form">
+            <p>Type each word you remember into the fields below:</p>
+            <div class="input-row">
+                <label for="word1">1.</label>
+                <input type="text" id="word1" autocomplete="off" />
+            </div>
+            <div class="input-row">
+                <label for="word2">2.</label>
+                <input type="text" id="word2" autocomplete="off" />
+            </div>
+            <div class="input-row">
+                <label for="word3">3.</label>
+                <input type="text" id="word3" autocomplete="off" />
+            </div>
+            <div class="input-row">
+                <label for="word4">4.</label>
+                <input type="text" id="word4" autocomplete="off" />
+            </div>
+            <div class="input-row">
+                <label for="word5">5.</label>
+                <input type="text" id="word5" autocomplete="off" />
+            </div>
+            <button type="button" id="submit-btn">Submit Answers</button>
+        </form>
+
+        <div id="results"></div>
+    </section>
+
+    <script>
+        (function () {
+            const wordsTest1 = ["Apple", "Book", "Cat", "Dog", "Elephant"];
+            const wordsTest2 = ["Fish", "Guitar", "House", "Ice", "Juice"];
+
+            
+            let currentStage = 0; // 0 = not started, 1 = Test 1 running, 2 = Test 1 answers, 3 = Test 2 running, 4 = done
+            let score1 = 0;
+            let score2 = 0;
+            let formShownTime1 = 0, formShownTime2 = 0;
+            let responseTime1 = 0, responseTime2 = 0;            
+
+
+            const singleWordDiv = document.getElementById("single-word");
+            const testForm = document.getElementById("test-form");
+            const submitBtn = document.getElementById("submit-btn");
+            const resultsDiv = document.getElementById("results");
+            const audioEl = document.getElementById("bg-music");
+
+            
+            function runCountdownThenShow(wordsArray, onComplete) {
+                let count = 3;
+                singleWordDiv.textContent = `Starting in ${count}…`;
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        singleWordDiv.textContent = `Starting in ${count}…`;
+                    } else {
+                        clearInterval(countdownInterval);
+                        singleWordDiv.textContent = "";
+                        showWordsOneByOne(wordsArray, onComplete);
+                    }
+                }, 1000);
+            }
+
+            
+            function showWordsOneByOne(wordsArray, onComplete) {
+                let index = 0;
+                const showInterval = setInterval(() => {
+                    if (index < wordsArray.length) {
+                        singleWordDiv.textContent = wordsArray[index];
+                        index++;
+                    } else {
+                        clearInterval(showInterval);
+                        singleWordDiv.textContent = "";
+                        onComplete();
+                    }
+                }, 1000);
+            }
+
+            function handleSubmit() {
+                const userInputs = [];
+                for (let i = 1; i <= 5; i++) {
+                    const val = document.getElementById("word" + i).value.trim();
+                    userInputs.push(val);
+                }
+
+            
+                if (currentStage === 1) {
+                    // Grade Test 1
+                    responseTime1 = Date.now() - formShownTime1;
+                    score1 = 0;
+                    userInputs.forEach((answer) => {
+                        if (wordsTest1.some(w => w.toLowerCase() === answer.toLowerCase())) {
+                            score1++;
+                        }
+                    });
+
+                    
+                    currentStage = 2; // Prepare for Test 2
+                    testForm.style.display = "none";
+
+                    // Silent classic the music for Test 2 
+                    audioEl.src =
+                        "https://archive.org/download/ludwig-van-beethoven-silence/" +
+                        "Eine%20Kleine%20Nachtmusik%20%28first%20movement%29.mp3";
+                    audioEl.load();
+                    audioEl.play().catch(() => {
+                        // If still blocked, no further action required—music will remain paused.
+                    });
+                    
+
+                    // Clear
+                    for (let i = 1; i <= 5; i++) {
+                        const inputElem = document.getElementById("word" + i);
+                        inputElem.value = "";
+                        inputElem.disabled = false;
+                        inputElem.classList.remove("correct", "incorrect");
+                    }
+                    
+            
+                    singleWordDiv.textContent = "Test 2 will be started in 5 seconds…";
+
+                    // Start Test 2 after a brief pause (optional)
+                    setTimeout(() => {
+                        currentStage = 3; // Test 2 is now running
+                        runCountdownThenShow(wordsTest2, () => {
+                            testForm.style.display = "block";
+                            formShownTime2 = Date.now();
+                        });
+                    }, 5000);
+                }
+                else if (currentStage === 3) {
+                    // Grade Test 2
+                    responseTime2 = Date.now() - formShownTime2;
+                    audioEl.volume = 0;
+                    score2 = 0;
+                    userInputs.forEach((answer) => {
+                        if (wordsTest2.some(w => w.toLowerCase() === answer.toLowerCase())) {
+                            score2++;
+                        }
+                    });
+
+                    currentStage = 4; // both tests are done
+                    testForm.style.display = "none";
+
+                    // Finally, show both results:
+                    resultsDiv.innerHTML = `
+                        <p>✅ <strong>Test 1 Score:</strong> You remembered ${score1} / ${wordsTest1.length} correctly in ${responseTime1} ms.</p>
+                        <p>✅ <strong>Test 2 Score:</strong> You remembered ${score2} / ${wordsTest2.length} correctly in ${responseTime2} ms.</p>
+                    `;
+                }
+            }
+
+            window.addEventListener("click", function _startOnce() {
+                if (currentStage === 0) {
+                    currentStage = 1;
+                    audioEl.play().catch(() => {
+                        // If blocked, no further action required—music will remain paused.
+                    });
+
+                    runCountdownThenShow(wordsTest1, () => {
+                        formShownTime1 = Date.now();
+                        testForm.style.display = "block";
+                    });
+
+                    window.removeEventListener("click", _startOnce);
+                }
+            });
+
+            submitBtn.addEventListener("click", handleSubmit);
+        })();
+    </script>
+</body>
+
+</html>
