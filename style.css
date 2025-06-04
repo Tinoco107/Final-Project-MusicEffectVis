@@ -1,46 +1,92 @@
 /* General Styling */
 body {
-  font-family: Arial, sans-serif;
-  margin: 40px;
-  background-color: #f9f9f9;
-  color: #333;
+  font-family: 'Inter', sans-serif;
+  background-color: #f7f7fa;
+  color: #222;
+  margin: 0;
+  padding: 40px;
+  line-height: 1.6;
 }
 
 header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 0;
+}
+#names{
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  font-family: 'Georgia', serif;
+  color: #666;
+  letter-spacing: 0.5px;
+  border-left: none;    
+  outline: none;       
 }
 
+#introduction {
+  max-width: 800px;
+  margin: 0 auto 50px auto;
+  background-color: #fffefc;
+  padding: 30px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+  color: #444;
+  text-align: center;
+}
 /* Global Subject Selection */
 #subjectSelection {
   text-align: center;
   margin-bottom: 30px;
 }
-
+#subjectSelection select {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
 /* Section Styling */
 section {
   margin-bottom: 50px;
-  background: #fff;
-  padding: 20px 30px;
-  border-radius: 5px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
 }
+.info-box {
+  background: #e8f1ff;
+  border-left: 5px solid #3b82f6;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+}
+
 
 h2 {
   text-align: center;
-  color: #444;
+  color: #2a2a2a;
+  font-size: 1.6rem;
+  margin-bottom: 15px;
 }
 
 h3 {
   text-align: center;
-  color: #555;
+  color: #444;
   margin-bottom: 10px;
+  font-size: 1.2rem;
 }
 
 /* Facet Container Styling for Behavioral Visualizations */
 #responseContainer {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 
 .facetContainer {
@@ -90,15 +136,39 @@ svg {
 #tooltip {
   position: absolute;
   text-align: left;
-  width: auto;
-  padding: 8px;
-  font-size: 12px;
-  background: lightsteelblue;
-  border: 1px solid #333;
-  border-radius: 4px;
+  padding: 10px;
+  font-size: 13px;
+  background: rgba(70, 130, 180, 0.9);
+  color: white;
+  border-radius: 6px;
   pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .hidden {
   opacity: 0;
+  pointer-events: none;
+}
+
+.info-bubbles {
+  display: flex;
+  justify-content: center;
+  gap: 40px;              
+  margin-top: 30px;
+  margin-bottom: 60px;    
+  flex-wrap: wrap;
+}
+
+.info-bubble {
+  max-width: 300px;
+  background-color: #fefefe;
+  padding: 16px 20px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #444;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
 }

@@ -14,9 +14,19 @@
   <script src="biopac_visualizations.js"></script>
 </head>
 <body>
+  
   <header>
     <h1>Cognitive Effects of Music on Performance</h1>
   </header>
+
+  <section id="names" class="info-box">
+    Angel Tinoco, Alexa Fernandez Tobias, Seunghyuk Chang, Viveka Dhanda
+  </section>
+
+  <section id="introduction" class="info-box">
+    <strong>Ever wondered how the music we listen to affects the brain? Do you prefer lofi beats or pop when selecting your study music? </strong>
+      You'll be given the chance to explore how calming and vexing music influence performance by diving deeper into how individuals may respond differently to music. We hope to be able to uncover the subtle interplay between musical conditions, brain activity, and task performance.
+  </section>
 
   <!-- Global Subject Selection -->
   <section id="subjectSelection">
@@ -45,6 +55,18 @@
     </div>
   </section>
 
+  <div class="info-bubbles">
+    <div class="info-bubble eda">
+      <strong>EDA</strong><br/>
+      Measures changes in skin electrical conductivity. Reflects stress or arousal levels (lower EDA usually means more relaxed, while higher tends to be correlated to excitement, fear, etc.).
+    </div>
+    <div class="info-bubble ecg">
+      <strong>ECG</strong><br/>
+      Reveals physiological and emotional states of the heart by monitoring electrical activity.
+    </div>
+  </div>
+
+
   <!-- Linked Physiological Signals -->
   <section id="physioSection">
     <h2>Linked Physiological Signals (EDA & ECG)</h2>
@@ -53,6 +75,8 @@
       <svg id="ecgChart" width="600" height="300"></svg>
     </div>
   </section>
+
+
 
   <!-- Write-Up Section -->
   <section id="writeup">
