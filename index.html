@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="style.css" />
   <!-- Load D3.js -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/scrollama"></script>
   <!-- Behavioral Visualizations & Processing -->
   <script src="data_processing_behavioral.js"></script>
   <script src="visualizations.js"></script>
@@ -23,59 +24,83 @@
     Angel Tinoco, Alexa Fernandez Tobias, Seunghyuk Chang, Viveka Dhanda
   </section>
 
-  <section id="introduction" class="info-box">
-    <strong>Ever wondered how the music we listen to affects the brain? Do you prefer lofi beats or pop when selecting your study music? </strong>
-      You'll be given the chance to explore how calming and vexing music influence performance by diving deeper into how individuals may respond differently to music. We hope to be able to uncover the subtle interplay between musical conditions, brain activity, and task performance.
-  </section>
-
-  <!-- Global Subject Selection -->
-  <section id="subjectSelection">
-    <label for="subjectSelect">Select Subject:</label>
-    <select id="subjectSelect">
-      <option value="All">All</option>
-      <option value="3F">Subject 3F</option>
-      <option value="4F">Subject 4F</option>
-      <option value="6M">Subject 6M</option>
-      <option value="8M">Subject 8M</option>
-      <option value="11F">Subject 11F</option>
-    </select>
-  </section>
-
-  <!-- Behavioral Response Time Distributions -->
-  <section id="behavioralSection">
-    <h2>Response Time Distributions</h2>
-    <div id="responseContainer">
-      <!-- The two faceted containers; contents update based on subject selection -->
-      <div id="calmingHist" class="facetContainer">
-        <h3>Calming</h3>
-      </div>
-      <div id="vexingHist" class="facetContainer">
-        <h3>Vexing</h3>
-      </div>
+  <section id="intro">
+    <div class="intro-container">
+      <h1>Welcome to the Cognitive Music Experiment!</h1>
+      <p>
+        Ever wondered how the music we listen to affects the brain? Do you prefer lofi beats or pop when selecting your study music? You'll be given the chance to explore how calming and vexing music influence performance by diving deeper into how individuals may respond differently to music. We hope to be able to uncover the subtle interplay between musical conditions, brain activity, and task performance.
+      </p>
+      <p>
+        Click the button below to begin your interactive exploration.
+      </p>
+      <button id="start-button">Start the Experience</button>
     </div>
   </section>
-
-  <div class="info-bubbles">
-    <div class="info-bubble eda">
-      <strong>EDA</strong><br/>
-      Measures changes in skin electrical conductivity. Reflects stress or arousal levels (lower EDA usually means more relaxed, while higher tends to be correlated to excitement, fear, etc.).
+  <section id="interactive" style="display: none;">
+  <h2>Avg. Accuracy vs. Avg. Response Times</h2>
+  
+  <!-- Main Behavioral Chart Container -->
+  <div id="chart-container">
+    <div id="chart"></div>
+  </div>
+    <!-- Shared Tooltip -->
+    <div id="tooltip" class="hidden"></div>
+  <!-- Section for Detailed Plot & Insights -->
+<section id="detailed-plot-section" style="display: none;">
+  <div class="viz-container">
+    <!-- Left side: Detailed Plot (Per-Trial Performance + Toggle Controls) -->
+    <div class="chart left">
+      <div id="detail-plot">
+        <!-- D3 will inject the detailed plot and toggles here -->
+      </div>
     </div>
-    <div class="info-bubble ecg">
-      <strong>ECG</strong><br/>
-      Reveals physiological and emotional states of the heart by monitoring electrical activity.
+    <!-- Right side: Subject Insights -->
+    <div class="text right">
+      <h2>Subject Insights</h2>
+      <p id="detailed-insight-text">
+        <!-- Detailed insight text will be injected dynamically -->
+      </p>
     </div>
   </div>
+</section>
 
-
-  <!-- Linked Physiological Signals -->
-  <section id="physioSection">
-    <h2>Linked Physiological Signals (EDA & ECG)</h2>
-    <div id="linkedChartsContainer">
-      <svg id="edaChart" width="600" height="300"></svg>
-      <svg id="ecgChart" width="600" height="300"></svg>
+<!-- Section for Physiological Signals -->
+<section id="physio-plot-section" style="display: none;">
+  <div class="intro-text">
+    <h2>Do Your Hearts Beat the Same? Dive deeper...</h2>
+  </div>
+  <div class="viz-container reverse">
+    <!-- Left side: (Optional) Physiological Insight Text -->
+    <div class="text left">
+      <h2>Physiological Signals</h2>
+      <p id="physio-insight-text">
+        <!-- Optional commentary -->
+      </p>
+      <div class="info-bubbles">
+        <div class="info-bubble eda">
+          <strong>EDA</strong><br/>
+          Measures changes in skin electrical conductivity. Reflects stress or arousal levels (lower EDA usually means more relaxed, while higher tends to be correlated to excitement, fear, etc.).
+        </div>
+        <div class="info-bubble ecg">
+          <strong>ECG</strong><br/>
+          Reveals physiological and emotional states of the heart by monitoring electrical activity.
+        </div>
+      </div>
     </div>
-  </section>
-
+    <!-- Right side: Physiological Chart -->
+    <div class="chart right">
+      <div id="physio-plot">
+        <section id="physioSection">
+          <h2>Linked Physiological Signals (EDA & ECG)</h2>
+          <div id="linkedChartsContainer">
+            <svg id="edaChart" width="600" height="300"></svg>
+            <svg id="ecgChart" width="600" height="300"></svg>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
 
 
   <!-- Write-Up Section -->
@@ -94,8 +119,34 @@
     </p>
     
   </section>
-
-  <!-- Shared Tooltip -->
-  <div id="tooltip" class="hidden"></div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const introSection = document.getElementById("intro");
+      const vizSection = document.getElementById("interactive");
+      const startBtn = document.getElementById("start-button");
+  
+      if (sessionStorage.getItem("skipIntro") === "true") {
+        introSection.style.display = "none";
+        vizSection.style.display = "block";
+        sessionStorage.removeItem("skipIntro");
+  
+        if (typeof drawMainCharts === "function") {
+          drawMainCharts();
+        } else {
+          console.error("drawMainCharts is not defined");
+        }
+  
+        return;
+      }
+  
+      if (startBtn) {
+        startBtn.addEventListener("click", function () {
+          window.location.href = "test.html";
+        });
+      }
+    });
+  </script>
+    
+  
 </body>
 </html>

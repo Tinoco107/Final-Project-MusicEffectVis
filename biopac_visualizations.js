@@ -1,217 +1,88 @@
+/*
 // Global margin configuration for physiological charts.
 const physioMargin = { top: 20, right: 20, bottom: 50, left: 60 };
 
 
-function updateLinkedPhysioCharts() {
-  if (!window.dataBiopacEDA || !window.dataBiopacECG) return;
+function updateLinkedPhysioCharts(subject) {
+  if (!window.dataBiopacEDA || !window.dataBiopacECG) {
+      console.error("ERROR: Biopac data is missing. Cannot proceed.");
+      return;
+  }
 
+  console.log("Attempting to update physiological charts for subject:", subject);
+  console.log("Biopac EDA Data:", window.dataBiopacEDA);
+  console.log("Biopac ECG Data:", window.dataBiopacECG);
 
-  // Get the selected subject from the global "subjectSelect" drop-down.
-  const selectedSubject = d3.select("#subjectSelect").property("value");
+  const dataEDA = window.dataBiopacEDA.filter(d => String(d.subject) === subject);
+  const dataECG = window.dataBiopacECG.filter(d => String(d.subject) === subject);
 
+  console.log("Filtered EDA Data:", dataEDA);
+  console.log("Filtered ECG Data:", dataECG);
 
-  const dataEDA =
-    selectedSubject === "All"
-      ? window.dataBiopacEDA
-      : window.dataBiopacEDA.filter(
-          (d) => String(d.subject) === selectedSubject
-        );
+  if (dataEDA.length === 0 || dataECG.length === 0) {
+      console.error("ERROR: No physiological data found for subject:", subject);
+      return;
+  }
 
+  // Ensure each row has a valid time property
+  dataEDA.forEach((d, i) => { d.time = d.time != null ? +d.time : i; });
+  dataECG.forEach((d, i) => { d.time = d.time != null ? +d.time : i; });
 
-  const dataECG =
-    selectedSubject === "All"
-      ? window.dataBiopacECG
-      : window.dataBiopacECG.filter(
-          (d) => String(d.subject) === selectedSubject
-        );
-
+  console.log("EDA Time Values:", dataEDA.map(d => d.time));
+  console.log("ECG Time Values:", dataECG.map(d => d.time));
 
   const edaSvg = d3.select("#edaChart");
   const ecgSvg = d3.select("#ecgChart");
   edaSvg.selectAll("*").remove();
   ecgSvg.selectAll("*").remove();
 
+  const allTimes = dataEDA.concat(dataECG).map(d => d.time);
+  console.log("Combined Time Values for xDomain:", allTimes);
 
-  const edaWidth =
-    +edaSvg.attr("width") - physioMargin.left - physioMargin.right;
-  const edaHeight =
-    +edaSvg.attr("height") - physioMargin.top - physioMargin.bottom;
-  const ecgWidth =
-    +ecgSvg.attr("width") - physioMargin.left - physioMargin.right;
-  const ecgHeight =
-    +ecgSvg.attr("height") - physioMargin.top - physioMargin.bottom;
-
-
-  const edaG = edaSvg
-    .append("g")
-    .attr("transform", `translate(${physioMargin.left},${physioMargin.top})`);
-  const ecgG = ecgSvg
-    .append("g")
-    .attr("transform", `translate(${physioMargin.left},${physioMargin.top})`);
-
-
-  // Use a common time domain.
-  const allTimes = dataEDA.concat(dataECG).map((d) => d.time);
   const xDomain = d3.extent(allTimes);
+  console.log("Computed xDomain:", xDomain);
 
+  const edaWidth = +edaSvg.attr("width") - physioMargin.left - physioMargin.right;
+  const edaHeight = +edaSvg.attr("height") - physioMargin.top - physioMargin.bottom;
+  const ecgWidth = +ecgSvg.attr("width") - physioMargin.left - physioMargin.right;
+  const ecgHeight = +ecgSvg.attr("height") - physioMargin.top - physioMargin.bottom;
 
-  const xScaleEDA = d3
-    .scaleLinear()
-    .domain(xDomain)
-    .range([0, edaWidth])
-    .nice();
-  const xScaleECG = d3
-    .scaleLinear()
-    .domain(xDomain)
-    .range([0, ecgWidth])
-    .nice();
+  const xScaleEDA = d3.scaleLinear().domain(xDomain).range([0, edaWidth]).nice();
+  const xScaleECG = d3.scaleLinear().domain(xDomain).range([0, ecgWidth]).nice();
 
+  const yScaleEDA = d3.scaleLinear()
+      .domain([d3.min(dataEDA, d => d.EDA), d3.max(dataEDA, d => d.EDA)])
+      .range([edaHeight, 0])
+      .nice();
+  const yScaleECG = d3.scaleLinear()
+      .domain([d3.min(dataECG, d => d.ECG), d3.max(dataECG, d => d.ECG)])
+      .range([ecgHeight, 0])
+      .nice();
 
-  const yScaleEDA = d3
-    .scaleLinear()
-    .domain([d3.min(dataEDA, (d) => d.EDA), d3.max(dataEDA, (d) => d.EDA)])
-    .range([edaHeight, 0])
-    .nice();
-  const yScaleECG = d3
-    .scaleLinear()
-    .domain([d3.min(dataECG, (d) => d.ECG), d3.max(dataECG, (d) => d.ECG)])
-    .range([ecgHeight, 0])
-    .nice();
+  console.log("Y Domain for EDA:", yScaleEDA.domain());
+  console.log("Y Domain for ECG:", yScaleECG.domain());
 
+  // If time values are invalid, prevent rendering
+  if (xDomain[0] == null || xDomain[1] == null) {
+      console.error("ERROR: xDomain contains null values. Cannot render chart.");
+      return;
+  }
 
-  // Draw axes.
-  edaG
-    .append("g")
-    .attr("transform", `translate(0, ${edaHeight})`)
-    .call(d3.axisBottom(xScaleEDA));
+  const edaG = edaSvg.append("g").attr("transform", `translate(${physioMargin.left},${physioMargin.top})`);
+  const ecgG = ecgSvg.append("g").attr("transform", `translate(${physioMargin.left},${physioMargin.top})`);
+
+  edaG.append("g").attr("transform", `translate(0, ${edaHeight})`).call(d3.axisBottom(xScaleEDA));
   edaG.append("g").call(d3.axisLeft(yScaleEDA));
-  ecgG
-    .append("g")
-    .attr("transform", `translate(0, ${ecgHeight})`)
-    .call(d3.axisBottom(xScaleECG));
+  ecgG.append("g").attr("transform", `translate(0, ${ecgHeight})`).call(d3.axisBottom(xScaleECG));
   ecgG.append("g").call(d3.axisLeft(yScaleECG));
 
+  const edaLine = d3.line().x(d => xScaleEDA(d.time)).y(d => yScaleEDA(d.EDA));
+  const ecgLine = d3.line().x(d => xScaleECG(d.time)).y(d => yScaleECG(d.ECG));
 
-  const edaLine = d3
-    .line()
-    .x((d) => xScaleEDA(d.time))
-    .y((d) => yScaleEDA(d.EDA));
-  const ecgLine = d3
-    .line()
-    .x((d) => xScaleECG(d.time))
-    .y((d) => yScaleECG(d.ECG));
+  edaG.append("path").datum(dataEDA).attr("fill", "none").attr("stroke", "purple").attr("stroke-width", 2).attr("d", edaLine);
+  ecgG.append("path").datum(dataECG).attr("fill", "none").attr("stroke", "orange").attr("stroke-width", 2).attr("d", ecgLine);
 
-
-  edaG
-    .append("path")
-    .datum(dataEDA)
-    .attr("fill", "none")
-    .attr("stroke", "purple")
-    .attr("stroke-width", 2)
-    .attr("d", edaLine);
-  ecgG
-    .append("path")
-    .datum(dataECG)
-    .attr("fill", "none")
-    .attr("stroke", "orange")
-    .attr("stroke-width", 2)
-    .attr("d", ecgLine);
-
-
-  // Add vertical marker lines.
-  const edaMarker = edaG
-    .append("line")
-    .attr("stroke", "black")
-    .attr("stroke-dasharray", "4,4")
-    .attr("y1", 0)
-    .attr("y2", edaHeight);
-  const ecgMarker = ecgG
-    .append("line")
-    .attr("stroke", "black")
-    .attr("stroke-dasharray", "4,4")
-    .attr("y1", 0)
-    .attr("y2", ecgHeight);
-
-
-  const tooltip = d3.select("#tooltip");
-
-
-  // Create a shared overlay on EDA chart.
-  edaG
-    .append("rect")
-    .attr("class", "overlay")
-    .attr("width", edaWidth)
-    .attr("height", edaHeight)
-    .style("fill", "none")
-    .style("pointer-events", "all")
-    .on("mousemove", function (event) {
-      const [xPos] = d3.pointer(event, this);
-      const t = xScaleEDA.invert(xPos);
-      updateLinkedTooltip(
-        t,
-        xScaleEDA,
-        xScaleECG,
-        yScaleEDA,
-        yScaleECG,
-        edaMarker,
-        ecgMarker,
-        tooltip,
-        event
-      );
-    })
-    .on("mouseout", () => {
-      tooltip.classed("hidden", true);
-      edaMarker.style("opacity", 0);
-      ecgMarker.style("opacity", 0);
-    });
-
-
-  // Overlay for ECG chart.
-  ecgG
-    .append("rect")
-    .attr("class", "overlay")
-    .attr("width", ecgWidth)
-    .attr("height", ecgHeight)
-    .style("fill", "none")
-    .style("pointer-events", "all")
-    .on("mousemove", function (event) {
-      const [xPos] = d3.pointer(event, this);
-      const t = xScaleECG.invert(xPos);
-      updateLinkedTooltip(
-        t,
-        xScaleEDA,
-        xScaleECG,
-        yScaleEDA,
-        yScaleECG,
-        edaMarker,
-        ecgMarker,
-        tooltip,
-        event
-      );
-    })
-    .on("mouseout", () => {
-      tooltip.classed("hidden", true);
-      edaMarker.style("opacity", 0);
-      ecgMarker.style("opacity", 0);
-    });
-
-
-  edaSvg
-    .append("text")
-    .attr("x", (edaWidth + physioMargin.left + physioMargin.right) / 2)
-    .attr("y", physioMargin.top - 5)
-    .attr("text-anchor", "middle")
-    .attr("class", "chart-title")
-    .text("EDA over Time");
-
-
-  ecgSvg
-    .append("text")
-    .attr("x", (ecgWidth + physioMargin.left + physioMargin.right) / 2)
-    .attr("y", physioMargin.top - 5)
-    .attr("text-anchor", "middle")
-    .attr("class", "chart-title")
-    .text("ECG over Time");
+  console.log("EDA & ECG Lines Rendered Successfully!");
 }
 
 
@@ -274,3 +145,5 @@ d3.select("#subjectSelect").on("change", () => {
 
 
 updateLinkedPhysioCharts();
+
+*/

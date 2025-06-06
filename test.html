@@ -68,11 +68,30 @@
             font-size: 1em;
             cursor: pointer;
         }
+        #skip-viz-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #skip-viz-btn button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
     <h1 class="center">🎵 Listen & Memorize 🎶</h1>
+    <div id="skip-viz-btn">
+        <button onclick="skipToViz()">Skip to Visualizations</button>
+      </div>
+      
 
     <section id="music-section" class="center">
         <h2>Background Music</h2>
@@ -123,6 +142,7 @@
         </form>
 
         <div id="results"></div>
+        <div id="toVizButton" class="center" style="margin-top: 20px;"></div>
     </section>
 
     <script>
@@ -246,6 +266,16 @@
                         <p>✅ <strong>Test 1 Score:</strong> You remembered ${score1} / ${wordsTest1.length} correctly in ${responseTime1} ms.</p>
                         <p>✅ <strong>Test 2 Score:</strong> You remembered ${score2} / ${wordsTest2.length} correctly in ${responseTime2} ms.</p>
                     `;
+                    document.getElementById("toVizButton").innerHTML = `
+                        <button id="goToViz" style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 4px;">
+                        Go to Visualizations
+                        </button>
+                    `;
+
+                    document.getElementById("goToViz").addEventListener("click", () => {
+                        sessionStorage.setItem("skipIntro", "true");
+                        window.location.href = "index.html";
+                    });
                 }
             }
 
@@ -267,6 +297,11 @@
 
             submitBtn.addEventListener("click", handleSubmit);
         })();
+
+        function skipToViz() {
+            sessionStorage.setItem("skipIntro", "true");
+            window.location.href = "index.html";
+        }
     </script>
 </body>
 
