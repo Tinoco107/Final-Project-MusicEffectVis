@@ -377,22 +377,3 @@ svg {
     flex-direction: column;
   }
 }
-
-.hint-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-
-.hint {
-  width: 100%;
-  text-align: center;
-  font-size: 1em;
-  font-style: italic;
-  color: #444;
-  margin: 0 auto 0.5em auto;
-  display: block;
-}
-
-
