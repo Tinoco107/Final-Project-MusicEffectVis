@@ -138,26 +138,6 @@
                 <label for="word5">5.</label>
                 <input type="text" id="word5" autocomplete="off" />
             </div>
-            <div class="input-row">
-                <label for="word6">6.</label>
-                <input type="text" id="word6" autocomplete="off" />
-            </div>
-            <div class="input-row">
-                <label for="word7">7.</label>
-                <input type="text" id="word7" autocomplete="off" />
-            </div>
-            <div class="input-row">
-                <label for="word8">8.</label>
-                <input type="text" id="word8" autocomplete="off" />
-            </div>
-            <div class="input-row">
-                <label for="word9">9.</label>
-                <input type="text" id="word9" autocomplete="off" />
-            </div>
-            <div class="input-row">
-                <label for="word10">10.</label>
-                <input type="text" id="word10" autocomplete="off" />
-            </div>
             <button type="button" id="submit-btn">Submit Answers</button>
         </form>
 
@@ -169,13 +149,13 @@
         (function () {
             // List 1: apple, chair, cloud, desk, flower, guitar, hat, island, juice, kite, lamp, mountain, notebook, ocean, pencil, river, shoe, star, train, window
             // List 2: baby, car, dog, egg, fish, grass, house, key, lion, moon, nest, orange, plant, queen, rock, sun, tree, umbrella, vase, zebra
-            const wordsTest1 = ["Apple", "Chair", "Cloud", "Desk", "Flower", "Guitar", "Hat", "Star", "Juice", "Kite"]; // total 10 words
-            const wordsTest2 = ["Baby", "Car", "Dog", "Egg", "Fish", "Grass", "House", "Key", "Lion", "Moon"]; // total 10 words
+            const wordsTest1 = ["Apple", "Chair", "Cloud", "Desk", "Flower", "Guitar", "Hat", "Star", "Juice", "Kite"];
+            const wordsTest2 = ["Baby", "Car", "Dog", "Egg", "Fish", "Grass", "House", "Key", "Lion", "Moon"];
 
             // random sorting of the words
             wordsTest1.sort(() => Math.random() - 0.5);
             wordsTest2.sort(() => Math.random() - 0.5);
-
+            
 
             let currentStage = 0; // 0 = not started, 1 = Test 1 running, 2 = Test 1 answers, 3 = Test 2 running, 4 = done
             let score1 = 0;
@@ -223,7 +203,7 @@
 
             function handleSubmit() {
                 const userInputs = [];
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= 5; i++) {
                     const val = document.getElementById("word" + i).value.trim();
                     userInputs.push(val);
                 }
@@ -254,7 +234,7 @@
                     
 
                     // Clear
-                    for (let i = 1; i <= 10; i++) {
+                    for (let i = 1; i <= 5; i++) {
                         const inputElem = document.getElementById("word" + i);
                         inputElem.value = "";
                         inputElem.disabled = false;
