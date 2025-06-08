@@ -67,23 +67,31 @@ function renderBehavioralCharts(files) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log(`Processing behavioral data...`);
+  const selectedSubject = document.getElementById("subjectSelect");
+  console.log(`Selected subject:", selectedSubject`);
+  if (!selectedSubject) {
+    console.error(`Subject select element not found!`);
+    return;
+  }
 
-  // Now add the change event listener as you already have
+  let file;
+  file = behavioralCSVFiles;
+  renderBehavioralCharts(file);
+
   selectedSubject.addEventListener("change", () => {
     const subject = selectedSubject.value;
-    console.log("Subject changed to:", subject);
+    console.log(`Subject changed to:`, subject);
     if (subject === "All") {
-      renderBehavioralCharts(behavioralCSVFiles);
+      console.log(`Showing all subjects.`);
+      file = behavioralCSVFiles;
+      renderBehavioralCharts(file);
     } else {
+      console.log(`Showing data for subject: ${subject}`);
       file = behavioralCSVFiles.filter((f) =>
         f.includes(`Subject${subject.slice(0, -1)}`)
       );
       renderBehavioralCharts(file);
     }
   });
-
-  // Initial render (optional)
-  renderBehavioralCharts(behavioralCSVFiles);
-  const midpointTime = d3.max(data, d => d.time) / 2;
-
 });

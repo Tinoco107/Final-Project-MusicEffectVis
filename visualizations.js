@@ -1117,25 +1117,7 @@ let detailedData = [];
         edaMarker.style("opacity", 0);
         ecgMarker.style("opacity", 0);
       });
-    
-    edaSvg.append("text")
-        .attr("x", (edaWidth + physioMargin.left + physioMargin.right) / 2)
-        .attr("y", physioMargin.top - 5)
-        .attr("text-anchor", "middle")
-        .attr("class", "chart-title")
-        .text("EDA over Time");
-    
-    ecgSvg.append("text")
-        .attr("x", (ecgWidth + physioMargin.left + physioMargin.right) / 2)
-        .attr("y", physioMargin.top - 5)
-        .attr("text-anchor", "middle")
-        .attr("class", "chart-title")
-        .text("ECG over Time");
-    
-    console.log(" EDA & ECG Lines Rendered Successfully!");
   }
-  
-
   function updateLinkedTooltip(
     time,
     xScaleEDA,
@@ -1185,4 +1167,3 @@ let detailedData = [];
   }
   
   window.drawMainCharts = drawMainCharts;
-
