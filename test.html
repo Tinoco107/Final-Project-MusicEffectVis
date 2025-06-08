@@ -147,16 +147,10 @@
 
     <script>
         (function () {
-            // List 1: apple, chair, cloud, desk, flower, guitar, hat, island, juice, kite, lamp, mountain, notebook, ocean, pencil, river, shoe, star, train, window
-            // List 2: baby, car, dog, egg, fish, grass, house, key, lion, moon, nest, orange, plant, queen, rock, sun, tree, umbrella, vase, zebra
-            const wordsTest1 = ["Apple", "Chair", "Cloud", "Desk", "Flower", "Guitar", "Hat", "Star", "Juice", "Kite"];
-            const wordsTest2 = ["Baby", "Car", "Dog", "Egg", "Fish", "Grass", "House", "Key", "Lion", "Moon"];
+            const wordsTest1 = ["Apple", "Book", "Cat", "Dog", "Elephant"];
+            const wordsTest2 = ["Fish", "Guitar", "House", "Ice", "Juice"];
 
-            // random sorting of the words
-            wordsTest1.sort(() => Math.random() - 0.5);
-            wordsTest2.sort(() => Math.random() - 0.5);
             
-
             let currentStage = 0; // 0 = not started, 1 = Test 1 running, 2 = Test 1 answers, 3 = Test 2 running, 4 = done
             let score1 = 0;
             let score2 = 0;
