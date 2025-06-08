@@ -855,11 +855,11 @@ let detailedData = [];
     
     // Update the subject insights on the right side.
     const subjectDescriptions = {
-      Subject11: "Subject 11 detailed insight text for plot.",
-      Subject3: "Subject 3 detailed insight text for plot.",
-      Subject8: "Subject 8 detailed insight text for plot.",
-      Subject4: "Subject 4 detailed insight text for plot.",
-      Subject6: "Subject 6 detailed insight text for plot."
+      Subject11: "Notice how we see a slight upward trend for accuracy, but a slight downward trend for vexing? What does this imply about subject 11's preferences?",
+      Subject3: "This subject actually reaches the longest reaction time across all subjects. Take a look at calming trial 5!",
+      Subject8: "How does the response time vs accuracy relationship shift for calming and vexing for this subject? What does this imply?",
+      Subject4: "Shifting from calming to vexing, we can see response times increase consistently. Would your results reflect this relationship?",
+      Subject6: "The accuracy line above the response times suggest accurate answers with quick responses (both calming and vexing in this case!)"
     };
     const detailText = subjectDescriptions[subject] || "Default detailed insight for plot.";
     d3.select("#detailed-insight-text").text(detailText);

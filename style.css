@@ -106,8 +106,11 @@ h3 {
 #linkedChartsContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 20px;
+  height: 650px;
+  overflow: visible;
 }
+
 
 /* Chart Title Styling */
 .chart-title {
@@ -247,10 +250,14 @@ svg {
 
 /* This paragraph should be updated dynamically with subject-specific insights */
 #detailed-insight-text {
-  /* You can add custom styles (color, font-weight, etc.) here */
-  font-size: 16px;
+  font-size: 30px;
   color: #333;
+  font-family: serif;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
 }
+
 
 /* -----------------------
    Section 2: Physiological Signals
@@ -384,7 +391,6 @@ svg {
   align-items: center;
 }
 
-
 .hint {
   width: 100%;
   text-align: center;
@@ -394,5 +400,28 @@ svg {
   margin: 0 auto 0.5em auto;
   display: block;
 }
+
+.chart-with-arrow {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.scroll-down-arrow {
+  font-family: 'Playfair Display', serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 2.5rem;
+  color: #333;
+  animation: bounceDown 1.8s infinite;
+  margin-left: 10px; /* Adjust for spacing if needed */
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
 
 
