@@ -60,7 +60,6 @@ function processBiopacFile(file, colName) {
       console.error("Error loading file " + file + ":", error);
       return [];
     });
-    
 }
 
 function renderBiopacCharts(EDAFiles, ECGFiles) {
@@ -95,17 +94,9 @@ function renderBiopacCharts(EDAFiles, ECGFiles) {
     .catch(function(error) {
       console.error("Error processing Biopac data:", error);
     });
-    
 }
 
 document.addEventListener("DOMContentLoaded", function() {
   console.log("Processing Biopac Data...");
-
-
-//   const textElement = document.getElementById("detailed-insight-text");
-//   textElement.textContent = insights[subjectId] || "Select a subject to see insights.";
-// }
   renderBiopacCharts(biopacEDAFiles, biopacECGFiles);
 });
-
-
