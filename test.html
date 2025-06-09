@@ -68,6 +68,7 @@
             font-size: 1em;
             cursor: pointer;
         }
+
         #skip-viz-btn {
             position: fixed;
             top: 20px;
@@ -90,8 +91,8 @@
     <h1 class="center">🎵 Listen & Memorize 🎶</h1>
     <div id="skip-viz-btn">
         <button onclick="skipToViz()">Skip to Visualizations</button>
-      </div>
-      
+    </div>
+
 
     <section id="music-section" class="center">
         <h2>Background Music</h2>
@@ -115,7 +116,7 @@
 
         <div id="single-word">Click anywhere to start Test 1…</div>
 
-        
+
         <form id="test-form">
             <p>Type each word you remember into the fields below:</p>
             <div class="input-row">
@@ -138,6 +139,26 @@
                 <label for="word5">5.</label>
                 <input type="text" id="word5" autocomplete="off" />
             </div>
+            <div class="input-row">
+                <label for="word6">6.</label>
+                <input type="text" id="word6" autocomplete="off" />
+            </div>
+            <div class="input-row">
+                <label for="word7">7.</label>
+                <input type="text" id="word7" autocomplete="off" />
+            </div>
+            <div class="input-row">
+                <label for="word8">8.</label>
+                <input type="text" id="word8" autocomplete="off" />
+            </div>
+            <div class="input-row">
+                <label for="word9">9.</label>
+                <input type="text" id="word9" autocomplete="off" />
+            </div>
+            <div class="input-row">
+                <label for="word10">10.</label>
+                <input type="text" id="word10" autocomplete="off" />
+            </div>
             <button type="button" id="submit-btn">Submit Answers</button>
         </form>
 
@@ -147,15 +168,21 @@
 
     <script>
         (function () {
-            const wordsTest1 = ["Apple", "Book", "Cat", "Dog", "Elephant"];
-            const wordsTest2 = ["Fish", "Guitar", "House", "Ice", "Juice"];
+            // List 1: apple, chair, cloud, desk, flower, guitar, hat, island, juice, kite, lamp, mountain, notebook, ocean, pencil, river, shoe, star, train, window
+            // List 2: baby, car, dog, egg, fish, grass, house, key, lion, moon, nest, orange, plant, queen, rock, sun, tree, umbrella, vase, zebra
+            const wordsTest1 = ["Apple", "Chair", "Cloud", "Desk", "Flower", "Guitar", "Hat", "Star", "Juice", "Kite"]; // total 10 words
+            const wordsTest2 = ["Baby", "Car", "Dog", "Egg", "Fish", "Grass", "House", "Key", "Lion", "Moon"]; // total 10 words
 
-            
+            // random sorting of the words
+            wordsTest1.sort(() => Math.random() - 0.5);
+            wordsTest2.sort(() => Math.random() - 0.5);
+
+
             let currentStage = 0; // 0 = not started, 1 = Test 1 running, 2 = Test 1 answers, 3 = Test 2 running, 4 = done
             let score1 = 0;
             let score2 = 0;
             let formShownTime1 = 0, formShownTime2 = 0;
-            let responseTime1 = 0, responseTime2 = 0;            
+            let responseTime1 = 0, responseTime2 = 0;
 
 
             const singleWordDiv = document.getElementById("single-word");
@@ -164,7 +191,7 @@
             const resultsDiv = document.getElementById("results");
             const audioEl = document.getElementById("bg-music");
 
-            
+
             function runCountdownThenShow(wordsArray, onComplete) {
                 let count = 3;
                 singleWordDiv.textContent = `Starting in ${count}…`;
@@ -180,7 +207,7 @@
                 }, 1000);
             }
 
-            
+
             function showWordsOneByOne(wordsArray, onComplete) {
                 let index = 0;
                 const showInterval = setInterval(() => {
@@ -197,12 +224,12 @@
 
             function handleSubmit() {
                 const userInputs = [];
-                for (let i = 1; i <= 5; i++) {
+                for (let i = 1; i <= 10; i++) {
                     const val = document.getElementById("word" + i).value.trim();
                     userInputs.push(val);
                 }
 
-            
+
                 if (currentStage === 1) {
                     // Grade Test 1
                     responseTime1 = Date.now() - formShownTime1;
@@ -213,7 +240,7 @@
                         }
                     });
 
-                    
+
                     currentStage = 2; // Prepare for Test 2
                     testForm.style.display = "none";
 
@@ -225,17 +252,17 @@
                     audioEl.play().catch(() => {
                         // If still blocked, no further action required—music will remain paused.
                     });
-                    
+
 
                     // Clear
-                    for (let i = 1; i <= 5; i++) {
+                    for (let i = 1; i <= 10; i++) {
                         const inputElem = document.getElementById("word" + i);
                         inputElem.value = "";
                         inputElem.disabled = false;
                         inputElem.classList.remove("correct", "incorrect");
                     }
-                    
-            
+
+
                     singleWordDiv.textContent = "Test 2 will be started in 5 seconds…";
 
                     // Start Test 2 after a brief pause (optional)
